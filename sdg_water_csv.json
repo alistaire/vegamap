@@ -1,0 +1,79 @@
+{
+    "config": {
+      "view": { "continuousWidth": 600, "continuousHeight": 600},
+      "legend": { "gradientVerticalMaxLength": 400 }
+    },
+    "data": {
+      "url": "https://raw.githubusercontent.com/ghannay/hydrobasin_viz/master/UK_hydro_lvl7.geojson",
+      "format": { "property": "features"}
+    }, 
+    "mark": {
+      "type": "geoshape",
+      "stroke": "white",
+      "strokeWidth": 0.4
+    },
+    "encoding": {
+      "color": {
+        "condition": {
+          "type": "quantitative",
+          "field": "Extent",
+          "scale": {
+            "scheme": "lighttealblue",
+            "domain": [
+              0,
+              600
+            ]
+          },
+          "test": "datum.Extent > -1"
+        },
+        "value": "#dbe9f6"
+      },
+      "tooltip": [
+        {
+          "field": "properties.HYBAS_ID",
+          "type": "nominal",
+          "title": "HYBAS_ID"
+        },
+        {
+          "field": "Extent",
+          "type": "nominal",
+          "title": "Spatial Extent"
+        }
+      ]
+    },
+    "height": 400,
+    "selection": {
+      "Water_sel": {
+        "type": "single",
+        "fields": ["Water"],
+        "bind": {"input": "select", "options":["Permanent", "Seasonal", "Ephemeral"], "type": "nominal"},
+        "init": {"Water": "Permanent"}
+      }
+    },
+    "transform": [
+      {
+        "lookup": "properties.HYBAS_ID",
+        "from": {
+          "data": { "url": "https://raw.githubusercontent.com/alistaire/vegamap/master/data/sdg_water_seasonal.csv"},
+          "key": "HYBAS_ID",
+          "fields": ["Water", "Year", "Extent"]
+        }
+      },
+      {
+        "calculate": "parseInt(datum.Year)",
+        "as": "Year"
+      },
+      {
+        "calculate": "datum.Water",
+        "as": "Water"
+      },
+      {
+        "filter": {
+          "selection": "Water_sel"
+        }
+      }
+    ],
+    "width": 700,
+    "$schema": "https://vega.github.io/schema/vega-lite/v4.0.2.json"
+  }
+  
